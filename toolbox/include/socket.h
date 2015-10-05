@@ -35,8 +35,6 @@
  */
  /******************************************************************************/
 
-
-
 #ifndef VOIP_TOOLBOX_SOCKET_H
 #define VOIP_TOOLBOX_SOCKET_H
 
