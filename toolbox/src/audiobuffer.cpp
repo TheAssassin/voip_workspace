@@ -4,7 +4,7 @@
  *  Author: Matthias Tessmann <matthias.tessmann@th-nuernberg.de
  *  Date: October, 5th 2015
  *
- *  Contents: Application entry point.
+ *  Contents: Very simple audio buffer class (wrapper around std::vector).
  *            Intended for educational purposes.
  *
  *  Additoinal notes:
@@ -33,11 +33,22 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-/******************************************************************************/
+ /******************************************************************************/
 
-#include "voip_application.h"
+#include "audiobuffer.h"
 
-int main(int argc, char *argv[]) {
-  voip::Application app;
-  return app.exec(argc, argv);
+#include <iostream>
+
+namespace voip_toolbox {
+
+AudioBuffer::AudioBuffer(uint32_t fs, uint32_t nch,
+                         uint32_t sr,
+                         AudioBuffer::SampleFormat fmt)
+  : frameSize_(fs),
+    nChannels_(nch),
+    sampleRate_(sr),
+    format_(fmt),
+    data_(fs*nch*(int)fmt/8, 0)
+{}
+
 }

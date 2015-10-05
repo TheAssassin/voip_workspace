@@ -4,7 +4,7 @@
  *  Author: Matthias Tessmann <matthias.tessmann@th-nuernberg.de
  *  Date: October, 5th 2015
  *
- *  Contents: Application entry point.
+ *  Contents: Very simple audio buffer class (wrapper around std::vector).
  *            Intended for educational purposes.
  *
  *  Additoinal notes:
@@ -33,11 +33,62 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-/******************************************************************************/
+ /******************************************************************************/
 
-#include "voip_application.h"
+#ifndef VOIP_TOOLBOX_AUDIOBUFFER_H
+#define VOIP_TOOLBOX_AUDIOBUFFER_H
 
-int main(int argc, char *argv[]) {
-  voip::Application app;
-  return app.exec(argc, argv);
+#include <stdint.h>
+#include <vector>
+
+namespace voip_toolbox {
+
+/* A very simple implementation of an audio buffer class. */
+class AudioBuffer {
+public:
+  typedef enum sampleformat_ {
+    INT16   = 16,
+    FLOAT32 = 32,
+  } SampleFormat;
+
+  AudioBuffer(uint32_t fs, uint32_t nch, uint32_t sr, AudioBuffer::SampleFormat fmt = FLOAT32);
+
+  uint32_t frameSize() const {
+    return frameSize_;
+  }
+
+  uint32_t channels() const {
+    return nChannels_;
+  }
+
+  uint32_t sampleRate() const {
+    return sampleRate_;
+  }
+
+  SampleFormat format() const {
+    return format_;
+  }
+
+  uint8_t* data() {
+    return &data_[0];
+  }
+
+  uint32_t size() const {
+    return data_.size();
+  }
+
+  uint32_t nSamples() const {
+    return frameSize()*channels();
+  }
+
+private:
+  uint32_t             frameSize_;
+  uint32_t             nChannels_;
+  uint32_t             sampleRate_;
+  SampleFormat         format_;
+  std::vector<uint8_t> data_;
+};
+
 }
+
+#endif /* VOIP_TOOLBOX_AUDIOBUFFER_H */

@@ -17,10 +17,12 @@ else()
 endif()
 
 add_subdirectory( ext/rtaudio )
+add_subdirectory( toolbox )
 
-set( VOIP_EXT_LIBS    rtaudio )
+set( VOIP_EXT_LIBS    rtaudio voip_toolbox)
 set( VOIP_EXT_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext/rtaudio
-                      ${CMAKE_CURRENT_SOURCE_DIR}/ext/tclap/include )
+                      ${CMAKE_CURRENT_SOURCE_DIR}/ext/tclap/include
+											${CMAKE_CURRENT_SOURCE_DIR}/toolbox/include )
 
 if( ${VOIP_BUILD_DEMOS} )
   add_subdirectory( demo )
