@@ -9,9 +9,11 @@ set( VOIP_BUILD_ASSIGNMENTS OFF CACHE BOOL "Build assignments.")
 include(CheckCXXCompilerFlag)
 
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-if(COMPILER_SUPPORTS_CXX11)
+if(${COMPILER_SUPPORTS_CXX11})
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+	if(${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+	endif()
 endif()
 
 add_subdirectory( ext/rtaudio )

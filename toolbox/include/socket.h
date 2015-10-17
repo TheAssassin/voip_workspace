@@ -40,6 +40,7 @@
 
 #include <string>
 #include <vector>
+#include <stdint.h>
 
 namespace voip_toolbox {
 

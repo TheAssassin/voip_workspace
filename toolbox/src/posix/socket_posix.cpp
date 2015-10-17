@@ -46,6 +46,10 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
+#include <string.h>
+#include <errno.h>
+#include <unistd.h>
+
 #include <iostream>
 #include <string>
 #include <sstream>
