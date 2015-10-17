@@ -38,6 +38,8 @@
 #include "socket.h"
 #include "tclap/CmdLine.h"
 
+#include <string.h>
+
 int main(int argc, char *argv[]) {
 
   /* Set up command line arguments */
