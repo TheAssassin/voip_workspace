@@ -3,6 +3,7 @@ cmake_minimum_required( VERSION 3.0 )
 project( VoIP )
 
 set( BUILD_TESTING OFF CACHE BOOL "Build tests (includes tests in all subprojects)." )
+set( VOIP_BUILD_OPUS OFF CACHE BOOL "Build opus audio coding library." )
 set( VOIP_BUILD_DEMOS ON CACHE BOOL "Build demo applications." )
 set( VOIP_BUILD_ASSIGNMENTS OFF CACHE BOOL "Build assignments.")
 
@@ -16,6 +17,15 @@ if(${COMPILER_SUPPORTS_CXX11})
 	endif()
 endif()
 
+set( VOIP_EXT_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext/rtaudio
+                      ${CMAKE_CURRENT_SOURCE_DIR}/ext/tclap/include
+											${CMAKE_CURRENT_SOURCE_DIR}/toolbox/include )
+
+if( ${VOIP_BUILD_OPUS} )
+	add_subdirectory( ext/opus )
+	list( APPEND VOIP_EXT_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext/opus/include )
+endif()
+
 add_subdirectory( ext/rtaudio )
 add_subdirectory( toolbox )
 
@@ -24,9 +34,6 @@ if( ${CMAKE_SYSTEM_NAME} STREQUAL Windows)
 else()
 	set( VOIP_EXT_LIBS    rtaudio voip_toolbox)
 endif()
-set( VOIP_EXT_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext/rtaudio
-                      ${CMAKE_CURRENT_SOURCE_DIR}/ext/tclap/include
-											${CMAKE_CURRENT_SOURCE_DIR}/toolbox/include )
 
 if( ${VOIP_BUILD_DEMOS} )
   add_subdirectory( demo )
