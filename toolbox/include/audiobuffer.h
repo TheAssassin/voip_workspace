@@ -47,11 +47,18 @@ namespace voip_toolbox {
 class AudioBuffer {
 public:
   typedef enum sampleformat_ {
+    UNKNOWN = 0,
     INT16   = 16,
     FLOAT32 = 32,
   } SampleFormat;
 
+  AudioBuffer();
   AudioBuffer(uint32_t fs, uint32_t nch, uint32_t sr, AudioBuffer::SampleFormat fmt = FLOAT32);
+  AudioBuffer(AudioBuffer const& rhs);
+  AudioBuffer& operator=(AudioBuffer const& rhs);
+
+  void setSamplerate(uint32_t sr);
+  void setFsChFmt(uint32_t fs, uint32_t nch, AudioBuffer::SampleFormat fmt);
 
   uint32_t frameSize() const {
     return frameSize_;

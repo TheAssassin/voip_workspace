@@ -41,6 +41,15 @@
 
 namespace voip_toolbox {
 
+AudioBuffer::AudioBuffer()
+  : frameSize_(0),
+    nChannels_(0),
+    sampleRate_(0),
+    format_(UNKNOWN),
+    data_()
+{}
+
+
 AudioBuffer::AudioBuffer(uint32_t fs, uint32_t nch,
                          uint32_t sr,
                          AudioBuffer::SampleFormat fmt)
@@ -50,5 +59,43 @@ AudioBuffer::AudioBuffer(uint32_t fs, uint32_t nch,
     format_(fmt),
     data_(fs*nch*(int)fmt/8, 0)
 {}
+
+// Note: this may be inefficient
+AudioBuffer::AudioBuffer(AudioBuffer const& rhs)
+  : frameSize_(rhs.frameSize_),
+    nChannels_(rhs.nChannels_),
+    sampleRate_(rhs.sampleRate_),
+    format_(rhs.format_),
+    data_(rhs.data_)
+{
+}
+
+// Note: this may be inefficient
+AudioBuffer& AudioBuffer::operator=(AudioBuffer const& rhs) {
+  if (this == &rhs) {
+    return *this;
+  }
+  frameSize_  = rhs.frameSize_;
+  nChannels_  = rhs.nChannels_;
+  sampleRate_ = rhs.sampleRate_;
+  format_     = rhs.format_;
+  data_       = rhs.data_;
+
+  return *this;
+}
+
+void AudioBuffer::setSamplerate(uint32_t sr) {
+  sampleRate_ = sr;
+}
+
+void AudioBuffer::setFsChFmt(uint32_t fs, uint32_t nch, AudioBuffer::SampleFormat fmt) {
+  data_.clear();
+  frameSize_ = fs;
+  nChannels_ = nch;
+  format_    = fmt;
+
+  uint32_t size = frameSize_ * nChannels_ * (format_ / 8);
+  data_.resize(size);
+}
 
 }
