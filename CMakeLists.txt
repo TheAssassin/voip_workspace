@@ -6,6 +6,7 @@ set( BUILD_TESTING OFF CACHE BOOL "Build tests (includes tests in all subproject
 set( VOIP_BUILD_OPUS OFF CACHE BOOL "Build opus audio coding library." )
 set( VOIP_BUILD_DEMOS ON CACHE BOOL "Build demo applications." )
 set( VOIP_BUILD_ASSIGNMENTS OFF CACHE BOOL "Build assignments.")
+set( VOIP_BUILD_SOLUTIONS OFF CACHE BOOL "Build solutions (check only, if you have them ;).")
 
 include(CheckCXXCompilerFlag)
 
