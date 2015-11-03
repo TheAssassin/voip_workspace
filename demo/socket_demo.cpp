@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
 
     TCLAP::CmdLine cmd("Socket demo", ' ', "0.1");
     TCLAP::ValueArg<unsigned int> port("", "port", "Local Port (default: 1976)", false, 1976, "unsigned int", cmd);
-    TCLAP::ValueArg<unsigned int> rport("", "rport", "Remote Port (default: 1976)", false, 1977, "unsigned int", cmd);
+    TCLAP::ValueArg<unsigned int> rport("", "rport", "Remote Port (default: 1976)", false, 1976, "unsigned int", cmd);
 
     TCLAP::UnlabeledValueArg<std::string> destIp("destIp", "Destination IP address", false, "", "std::string", cmd);
     TCLAP::SwitchArg receive("r", "receive", "Act as receiver.", cmd);
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
         exit(-1);
       }
 
-      voip_toolbox::Ipv4SocketAddress addr("", port.getValue());
+      // voip_toolbox::Ipv4SocketAddress addr("", port.getValue());
       voip_toolbox::Ipv4SocketAddress raddr(destIp.getValue(), rport.getValue());
 
       voip_toolbox::UdpSocket s;
@@ -70,12 +70,13 @@ int main(int argc, char *argv[]) {
         std::cerr << "Socket is open. Sending 'hello' to " << raddr.toString(true) << std::endl;
       }
 
+      /* If sender is used as sender only it does not need to bind the socket
       if (!s.bind(addr)) {
         std::cerr << "Error binding socket!" << std::endl;
         s.close();
         exit(-1);
       }
-
+      */
       const char* hellostr = "hello";
       std::vector<uint8_t> data(hellostr, hellostr + strlen(hellostr));
       uint32_t send_cnt = 0, i = 0;
