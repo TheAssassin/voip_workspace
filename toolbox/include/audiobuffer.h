@@ -80,6 +80,10 @@ public:
     return &data_[0];
   }
 
+  const uint8_t* data() const {
+    return &data_[0];
+  }
+
   uint32_t size() const {
     return data_.size();
   }
