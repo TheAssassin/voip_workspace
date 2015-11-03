@@ -51,7 +51,10 @@ class Ipv4SocketAddress {
 public:
   explicit Ipv4SocketAddress(uint16_t port = 0);
   Ipv4SocketAddress(std::string const& addr, uint16_t port = 0);
+  Ipv4SocketAddress(Ipv4SocketAddress const& rhs);
   ~Ipv4SocketAddress();
+
+  Ipv4SocketAddress& operator=(Ipv4SocketAddress const& rhs);
 
   std::string   toString(bool wPort = false) const;
 
@@ -89,6 +92,9 @@ public:
   bool close();
 
 private:
+  UdpSocket(UdpSocket const& other);
+  UdpSocket& operator=(UdpSocket const& other);
+
   class UdpSocketImpl;
   UdpSocketImpl *pImpl_;
 };

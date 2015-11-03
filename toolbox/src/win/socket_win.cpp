@@ -92,7 +92,7 @@ Ipv4SocketAddress::Ipv4SocketAddress(uint16_t p)
 }
 
 Ipv4SocketAddress::Ipv4SocketAddress(std::string const& addr, uint16_t p)
-  : pImpl_(new Ipv4SocketAddress::Ipv4SocketAddressImpl())
+  : pImpl_(new Ipv4SocketAddress::Ipv4SocketAddressImpl)
 {
   if (InitWinsock() != 0) {
     std::cerr << "Error initializing Windows sockets!" << std::endl;
@@ -100,6 +100,27 @@ Ipv4SocketAddress::Ipv4SocketAddress(std::string const& addr, uint16_t p)
   pImpl_->port                 = p;
   pImpl_->ipv4address.sin_port = htons(p);
   setAddress(addr);
+}
+
+Ipv4SocketAddress::Ipv4SocketAddress(Ipv4SocketAddress const& rhs) {
+  if (InitWinsock() != 0) {
+    std::cerr << "Error initializing Windows sockets!" << std::endl;
+  }
+
+  if (pImpl_)
+    delete pImpl_;
+  pImpl_ = new Ipv4SocketAddress::Ipv4SocketAddressImpl;
+  *pImpl_ = *(rhs.pImpl_);
+}
+
+Ipv4SocketAddress& Ipv4SocketAddress::operator=(Ipv4SocketAddress const& rhs) {
+  if (this != &rhs) { // self assignment check
+    if (pImpl_)
+      delete pImpl_;
+    pImpl_ = new Ipv4SocketAddress::Ipv4SocketAddressImpl;
+    *pImpl_ = *(rhs.pImpl_);
+  }
+  return *this;
 }
 
 Ipv4SocketAddress::~Ipv4SocketAddress() {
@@ -303,7 +324,7 @@ void UdpSocket::recvfrom(Ipv4SocketAddress& addr, std::vector<uint8_t>& data, ui
   port     = &((sockaddr_in*)addr.get_implementation())->sin_port;
 
   int32_t flags = 0;
-  
+
   u_long nonblocking = 0;
   if (!bBlock) {
     nonblocking = 1;
@@ -314,7 +335,7 @@ void UdpSocket::recvfrom(Ipv4SocketAddress& addr, std::vector<uint8_t>& data, ui
 
   if (bPeek)
     flags |= MSG_PEEK;
-  
+
   uint32_t toread = maxSize ? maxSize : data.capacity();
   if (maxSize > data.capacity()) {
     std::cerr << "Data to read over buffer capacity!" << std::endl;

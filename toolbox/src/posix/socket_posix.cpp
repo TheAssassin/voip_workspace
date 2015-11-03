@@ -95,6 +95,23 @@ Ipv4SocketAddress::Ipv4SocketAddress(std::string const& addr, uint16_t p)
   setAddress(addr);
 }
 
+Ipv4SocketAddress::Ipv4SocketAddress(Ipv4SocketAddress const& rhs) {
+  if (pImpl_)
+    delete pImpl_;
+  pImpl_ = new Ipv4SocketAddress::Ipv4SocketAddressImpl;
+  *pImpl_ = *(rhs.pImpl_);
+}
+
+Ipv4SocketAddress& Ipv4SocketAddress::operator=(Ipv4SocketAddress const& rhs) {
+  if (this != &rhs) { // self assignment check
+    if (pImpl_)
+      delete pImpl_;
+    pImpl_ = new Ipv4SocketAddress::Ipv4SocketAddressImpl;
+    *pImpl_ = *(rhs.pImpl_);
+  }
+  return *this;
+}
+
 Ipv4SocketAddress::~Ipv4SocketAddress() {
   if (pImpl_)
     delete pImpl_;
