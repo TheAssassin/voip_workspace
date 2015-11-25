@@ -102,14 +102,13 @@ Ipv4SocketAddress::Ipv4SocketAddress(std::string const& addr, uint16_t p)
   setAddress(addr);
 }
 
-Ipv4SocketAddress::Ipv4SocketAddress(Ipv4SocketAddress const& rhs) {
+Ipv4SocketAddress::Ipv4SocketAddress(Ipv4SocketAddress const& rhs)
+  : pImpl_(new Ipv4SocketAddress::Ipv4SocketAddressImpl)
+{
   if (InitWinsock() != 0) {
     std::cerr << "Error initializing Windows sockets!" << std::endl;
   }
 
-  if (pImpl_)
-    delete pImpl_;
-  pImpl_ = new Ipv4SocketAddress::Ipv4SocketAddressImpl;
   *pImpl_ = *(rhs.pImpl_);
 }
 

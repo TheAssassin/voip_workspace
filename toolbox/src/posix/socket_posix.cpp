@@ -95,9 +95,9 @@ Ipv4SocketAddress::Ipv4SocketAddress(std::string const& addr, uint16_t p)
   setAddress(addr);
 }
 
-Ipv4SocketAddress::Ipv4SocketAddress(Ipv4SocketAddress const& rhs) {
-  if (pImpl_)
-    delete pImpl_;
+Ipv4SocketAddress::Ipv4SocketAddress(Ipv4SocketAddress const& rhs)
+  : pImpl_(new Ipv4SocketAddress::Ipv4SocketAddressImpl)
+{
   pImpl_ = new Ipv4SocketAddress::Ipv4SocketAddressImpl;
   *pImpl_ = *(rhs.pImpl_);
 }
