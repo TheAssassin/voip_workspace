@@ -65,9 +65,7 @@ public:
   bool          isValid() const;
   bool          isWildcardAdress() const;
 
-  // This is quite nasty :-(
-  void*         get_implementation();
-  const void*   get_implementation() const;
+  friend class UdpSocket;
 
 private:
   struct Ipv4SocketAddressImpl;
@@ -80,6 +78,8 @@ private:
 class UdpSocket {
 public:
   UdpSocket();
+  UdpSocket(UdpSocket const& other)            = delete;
+  UdpSocket& operator=(UdpSocket const& other) = delete;
   ~UdpSocket();
 
   bool open();
@@ -92,9 +92,6 @@ public:
   bool close();
 
 private:
-  UdpSocket(UdpSocket const& other);
-  UdpSocket& operator=(UdpSocket const& other);
-
   class UdpSocketImpl;
   UdpSocketImpl *pImpl_;
 };
