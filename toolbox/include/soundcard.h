@@ -38,12 +38,14 @@
 #ifndef VOIP_SOUNDCARD_H
 #define VOIP_SOUNDCARD_H
 
+#include "audiobuffer.h"
+
 namespace voip {
 
-class AudioIO {
+class AudioInputOutputProcessor {
 public:
-  virtual ~AudioIO() = 0;
-  virtual int process() = 0;
+  virtual ~AudioInputOutputProcessor() = 0;
+  virtual int process(voip_toolbox::AudioBuffer& output, voip_toolbox::AudioBuffer const& input) = 0;
 };
 
 class SoundCard {
@@ -51,14 +53,18 @@ public:
   static void listDevices();
 
 public:
-  SoundCard(AudioIO *audioIO);
+  SoundCard(AudioInputOutputProcessor *audioIoProcessor);
   ~SoundCard();
+  
+  bool init(int inDev, int outDev, unsigned int inCh, unsigned int outCh, unsigned int sr,
+            unsigned int fs, voip_toolbox::AudioBuffer::SampleFormat sampleFormat);
+  bool start();
+  bool stop();
 
 private:
-
-  AudioIO *audioIO_;
+  struct SoundCardImpl;
+  SoundCardImpl *impl_;  
 };
-
 
 }
 

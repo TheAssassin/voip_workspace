@@ -66,8 +66,10 @@ bool Application::init(int argc, char *argv[]) {
 
     TCLAP::CmdLine cmd("VoIP Real-Time Communication Project", ' ', "0.1");
 
+    // This is the only command line argument currently used
     TCLAP::SwitchArg listDevices("l", "list-devices", "List audio devices", cmd, false);
 
+    // These are here for showing what you might need!
     TCLAP::ValueArg<int> inDev("i", "input-device", "Select input device", false, -1, "int", cmd);
     TCLAP::ValueArg<int> outDev("o", "output-device", "Select output device", false, -1, "int", cmd);
 

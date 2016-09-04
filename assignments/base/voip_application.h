@@ -40,6 +40,7 @@
 
 namespace voip {
 
+// This is the application entry point
 class Application {
 public:
   Application();

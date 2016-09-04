@@ -38,7 +38,7 @@
 #include <iostream>
 #include <cmath>
 #include <random>
-#include "RtAudio.h"
+#include "soundcard.h"
 #include "tclap/CmdLine.h"
 
 /******************************************************************************/
@@ -101,37 +101,26 @@ private:
 /******************************************************************************/
 /* SimplePlayback class */
 /******************************************************************************/
-class SimplePlayback {
-public:
-  static int rtaudio_callback(void *outBuf, void *inBuf, unsigned int nFrames,
-                              double streamTime, RtAudioStreamStatus status, void *userData);
-
+class SimplePlayback : public voip::AudioInputOutputProcessor {
 public:
   SimplePlayback();
   ~SimplePlayback();
+
+  int process(voip_toolbox::AudioBuffer& output, voip_toolbox::AudioBuffer const& input);
 
   bool init(unsigned int sr, unsigned int nch, unsigned int toneGen);
   bool start();
   bool stop();
 
 private:
-  int callback(void *outBuf, void *inBuf, unsigned int nFrames, double streamTime, RtAudioStreamStatus status);
-
-  RtAudio                   audio_;
-  RtAudio::StreamParameters streamParameters_;
+  voip::SoundCard           soundcard_;
   bool                      playing_;
   unsigned int              sr_;
   unsigned int              fs_;
   ToneGen*                  tg_;
 };
 
-int SimplePlayback::rtaudio_callback(void *outBuf, void *inBuf, unsigned int nFrames,
-                                     double streamTime, RtAudioStreamStatus status, void *userData) {
-  SimplePlayback *sp = reinterpret_cast<SimplePlayback*>(userData);
-  return sp->callback(outBuf, inBuf, nFrames, streamTime, status);
-}
-
-SimplePlayback::SimplePlayback() : audio_(), streamParameters_(), playing_(false), sr_(0), fs_(512), tg_(NULL) {
+SimplePlayback::SimplePlayback() : soundcard_(this), playing_(false), sr_(0), fs_(512), tg_(NULL) {
 }
 
 SimplePlayback::~SimplePlayback() {
@@ -144,67 +133,39 @@ SimplePlayback::~SimplePlayback() {
 bool SimplePlayback::init(unsigned int sr, unsigned int nch, unsigned int toneGen) {
 
   sr_                            = sr;
-  streamParameters_.deviceId     = audio_.getDefaultOutputDevice();
-  streamParameters_.nChannels    = nch;
-  streamParameters_.firstChannel = 0;
+  soundcard_.init(-1, -1, 1, 1, sr_, fs_, voip_toolbox::AudioBuffer::FLOAT32);
 
-  try {
-    audio_.openStream(&streamParameters_, NULL, RTAUDIO_FLOAT32, sr_, &fs_, &SimplePlayback::rtaudio_callback, (void*)this);
-  } catch (RtAudioError& e) {
-    e.printMessage();
-    return false;
+  if (tg_)
+    delete tg_;
+
+  switch (toneGen) {
+    case 1:
+      tg_ = new SquareGen();
+      break;
+    case 2:
+      tg_ = new WhiteNoiseGen();
+      break;
+    default:
+      tg_ = new SineGen();
+      break;
   }
-
-    if (tg_)
-      delete tg_;
-
-    switch (toneGen) {
-      case 1:
-        tg_ = new SquareGen();
-        break;
-      case 2:
-        tg_ = new WhiteNoiseGen();
-        break;
-      default:
-        tg_ = new SineGen();
-        break;
-    }
 
   return true;
 }
 
 bool SimplePlayback::start() {
-  if (playing_)
-    return false;
-  try {
-    audio_.startStream();
-    playing_ = true;
-  } catch (RtAudioError& e) {
-    e.printMessage();
-    return false;
-  }
-  return true;
+  return soundcard_.start();
 }
 
 bool SimplePlayback::stop() {
-  if (!playing_)
-    return false;
-  try {
-    audio_.stopStream();
-    playing_ = false;
-    if (audio_.isStreamOpen())
-      audio_.closeStream();
-  } catch (RtAudioError& e) {
-    e.printMessage();
-    return false;
-  }
-  return true;
+  return soundcard_.stop();
 }
 
-int SimplePlayback::callback(void *outBuf, void *inBuf, unsigned int nFrames,
-                             double streamTime, RtAudioStreamStatus status) {
-  float *buf = (float*) outBuf;
-  for (int i = 0; i < nFrames; ++i) {
+int SimplePlayback::process(voip_toolbox::AudioBuffer& output, voip_toolbox::AudioBuffer const& input) {
+  float *buf = (float*) output.data();
+
+
+  for (int i = 0; i < output.nSamples(); ++i) {
     // Note: this will not work if nChannels is > 1
     // Bonus exercise: fix it :-)
     *buf++ = tg_->nextSample();
