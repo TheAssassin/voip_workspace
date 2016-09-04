@@ -188,15 +188,6 @@ bool Ipv4SocketAddress::isWildcardAdress() const {
   return (pImpl_->ipv4address.sin_addr.s_addr == htonl(INADDR_ANY));
 }
 
-void* Ipv4SocketAddress::get_implementation() {
-  return reinterpret_cast<void*>(&pImpl_->ipv4address);
-}
-
-const void* Ipv4SocketAddress::get_implementation() const {
-  return reinterpret_cast<const void*>(&pImpl_->ipv4address);
-}
-
-
 /******************************************************************************/
 /* class UdpSocket */
 /******************************************************************************/
@@ -259,7 +250,7 @@ bool UdpSocket::bind(Ipv4SocketAddress const& addr) {
   struct sockaddr* a = NULL;
   socklen_t    a_len = 0;
 
-  a = (struct sockaddr*) addr.get_implementation();
+  a = (struct sockaddr*) &addr.pImpl_->ipv4address;
   ((sockaddr_in*)a)->sin_family = AF_INET;
   a_len = sizeof(sockaddr_in);
 
@@ -278,7 +269,7 @@ uint32_t UdpSocket::sendto(Ipv4SocketAddress const& addr, std::vector<uint8_t> c
 
   struct sockaddr* a = NULL;
   socklen_t    a_len = 0;
-  a     = (struct sockaddr*) addr.get_implementation();
+  a     = (struct sockaddr*) &addr.pImpl_->ipv4address;
   a_len = sizeof(sockaddr_in);
 
   u_long nonblocking = 0;
@@ -317,10 +308,10 @@ void UdpSocket::recvfrom(Ipv4SocketAddress& addr, std::vector<uint8_t>& data, ui
   socklen_t         a_len;
   u_short*          port = NULL;
 
-  a     = (struct sockaddr*) addr.get_implementation();
-  (*((sockaddr_in*)addr.get_implementation())).sin_family = AF_INET;
+  a     = (struct sockaddr*) &addr.pImpl_->ipv4address;
+  addr.pImpl_->ipv4address.sin_family = AF_INET;
   a_len = sizeof(sockaddr_in);
-  port     = &((sockaddr_in*)addr.get_implementation())->sin_port;
+  port     = &addr.pImpl_->ipv4address.sin_port;
 
   int32_t flags = 0;
 
