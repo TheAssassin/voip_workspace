@@ -36,6 +36,7 @@
 /******************************************************************************/
 
 #include <iostream>
+#include <cstring>
 #include "RtAudio.h"
 
 #include "soundcard.h"
@@ -108,9 +109,9 @@ int SoundCard::SoundCardImpl::callback(void *outBuf, void *inBuf, unsigned int n
     outputBuffer_.setFsChFmt(fs_, outputParameters_.nChannels, fmt_);
   }
 
-  memcpy(inputBuffer_.data(), inBuf, inputBuffer_.size());
+  ::memcpy(inputBuffer_.data(), inBuf, inputBuffer_.size());
   int retval = audioIO_->process(outputBuffer_, inputBuffer_);
-  memcpy(outBuf, outputBuffer_.data(), outputBuffer_.size());
+  ::memcpy(outBuf, outputBuffer_.data(), outputBuffer_.size());
 
   return retval;
 }
