@@ -31,9 +31,9 @@ add_subdirectory( ext/rtaudio )
 add_subdirectory( toolbox )
 
 if( ${CMAKE_SYSTEM_NAME} STREQUAL Windows)
-	set( VOIP_EXT_LIBS    rtaudio_static voip_toolbox ws2_32)
+	set( VOIP_EXT_LIBS voip_toolbox rtaudio_static ws2_32)
 else()
-	set( VOIP_EXT_LIBS    rtaudio voip_toolbox)
+	set( VOIP_EXT_LIBS voip_toolbox rtaudio)
 endif()
 
 if( ${VOIP_BUILD_DEMOS} )
